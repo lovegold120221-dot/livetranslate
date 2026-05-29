@@ -24,15 +24,22 @@ Anyone with the link joins as a peer. Each participant picks one language — th
 flowchart LR
     Alice(["Alice<br/>EN"])
     Bob(["Bob<br/>ES"])
-    Agent["<b>Translator agent</b><br/><i>Python worker, one per LiveKit room</i><br/><br/>One Gemini Live session per<br/>(speaker, target_lang) pair<br/><br/>Publishes per pair:<br/>• audio · <code>tx:speaker:target_lang</code><br/>• text · <code>lk.translation</code>"]
+    Agent["<b>Translator agent</b><br/>Python worker<br/>one per LiveKit room"]
 
     Alice -- mic --> Agent
     Bob -- mic --> Agent
-    Agent -- "tx:bob:en<br/>(Bob in EN)" --> Alice
-    Agent -- "tx:alice:es<br/>(Alice in ES)" --> Bob
+    Agent -- "tx:bob:en" --> Alice
+    Agent -- "tx:alice:es" --> Bob
 ```
 
-Each participant's chosen language lives in their LiveKit `attributes.lang`. The agent watches `participantAttributesChanged`, reconciles a `(speaker, target_lang)` session map, and publishes one translator track per pair (skipping pairs where source == target). The frontend subscribes to either the native mic or the matching translator track based on the same predicate.
+Each participant's chosen language lives in their LiveKit `attributes.lang`. The agent watches `participantAttributesChanged` and reconciles a map of `(speaker, target_lang)` sessions — one Gemini Live session per pair, skipping pairs where source == target.
+
+For each active pair the agent publishes two things into the room:
+
+- an audio track named **`tx:<speaker>:<target_lang>`** carrying the translated speech
+- a **`lk.translation`** text-stream carrying the matching captions, tagged with `target_lang`
+
+The frontend subscribes to either the native mic or the matching `tx:*` track for each peer, based on the same `(listener_lang, speaker_lang)` predicate.
 
 ## Quick start
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 # --- Gemini Live ---
 
-GEMINI_MODEL = "gemini-3.1-flash-lite-live-translate"
+GEMINI_MODEL = "gemini-3.5-live-translate-preview"
 
 # Gemini Live API audio formats.
 GEMINI_INPUT_SAMPLE_RATE = 16000  # Gemini expects 16kHz mono PCM in

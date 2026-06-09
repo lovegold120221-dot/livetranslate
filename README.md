@@ -124,14 +124,14 @@ Caps in `src/lib/config.ts` and `translator/src/config.py` — adjust together:
 | Empty-room timeout | 60s | token route |
 | Session grace on mute | 10s | `SESSION_GRACE_SEC` (agent) |
 | Reconcile debounce | 250ms | `RECONCILE_DEBOUNCE_SEC` (agent) |
-| Gemini model | `gemini-3.1-flash-lite-live-translate` | `GEMINI_MODEL` (agent) |
+| Gemini model | `gemini-3.5-live-translate-preview` | `GEMINI_MODEL` (agent) |
 
 ## Tech stack
 
 - **Frontend** — Next.js 16 (Turbopack), React 19, `@livekit/components-react`, `livekit-client`
 - **Token mint** — `livekit-server-sdk` (`RoomAgentDispatch` + `RoomConfiguration`)
 - **Agent runtime** — `livekit-agents` 1.5 with `AgentServer.rtc_session()`
-- **Translation** — `google-genai` Live API (`client.aio.live.connect()` with `streamingTranslationConfig`)
+- **Translation** — Gemini Live API (raw v1beta `BidiGenerateContent` WebSocket with `translationConfig`)
 - **Audio I/O** — `livekit.rtc.AudioStream` (16 kHz mono in) + `AudioSource` (24 kHz mono out)
 - **Typography** — Instrument Serif (display), DM Sans (body), DM Mono (status)
 - **Package management** — `pnpm` + `uv`

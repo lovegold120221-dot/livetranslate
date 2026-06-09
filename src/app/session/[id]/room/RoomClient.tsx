@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react";
+import {
+  LiveKitRoom,
+  RoomAudioRenderer,
+  StartAudio,
+} from "@livekit/components-react";
 import "@livekit/components-styles";
 import InCall from "./InCall";
 
@@ -109,6 +113,21 @@ export default function RoomClient({ sessionId }: { sessionId: string }) {
     >
       <InCall initialLang={initialLang} onLeave={handleLeave} />
       <RoomAudioRenderer />
+      {/* Browsers block audio playback until a user gesture. A listener whose
+          mic stays off never triggers that gesture, so inbound translation
+          audio would silently never play. StartAudio renders only while
+          playback is blocked and calls room.startAudio() on click. */}
+      <StartAudio
+        label="🔊 Tap to enable translated audio"
+        className="btn"
+        style={{
+          position: "fixed",
+          left: "50%",
+          bottom: 96,
+          transform: "translateX(-50%)",
+          zIndex: 1000,
+        }}
+      />
     </LiveKitRoom>
   );
 }

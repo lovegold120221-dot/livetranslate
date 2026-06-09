@@ -1,12 +1,11 @@
 """One bidirectional Gemini Live session bridging a speaker to a target language.
 
 We talk to Gemini Live via a raw WebSocket against the v1beta BidiGenerateContent
-endpoint rather than via google-genai's `client.aio.live.connect()`. Reason:
-the SDK serializes the streaming-translation config under the wrong wire name
-(`streamTranslationConfig`, without `-ing`) and ignores Pydantic alias overrides.
-The v1beta API actually expects `streamingTranslationConfig` (with `-ing`) nested
-under `generationConfig`, as the previous Node implementation used successfully.
-Bypassing the SDK lets us control the exact JSON shape.
+endpoint rather than via google-genai's `client.aio.live.connect()`. The v1beta
+API expects `translationConfig` nested under `generationConfig` (renamed from the
+EAP-era `streamingTranslationConfig` at the public launch). Bypassing the SDK lets
+us control the exact JSON shape; python-genai >= 2.8.0 now exposes a matching
+`TranslationConfig` if we later choose to adopt the SDK.
 """
 
 from __future__ import annotations
@@ -220,7 +219,7 @@ class GeminiSession:
                 "outputAudioTranscription": {},
                 "generationConfig": {
                     "responseModalities": ["AUDIO"],
-                    "streamingTranslationConfig": {
+                    "translationConfig": {
                         "targetLanguageCode": self._target_lang,
                         "echoTargetLanguage": False,
                     },

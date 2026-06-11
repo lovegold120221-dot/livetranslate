@@ -15,8 +15,14 @@ export const NATIVE_OPTION: Language = {
 
 /**
  * All 200+ languages with BCP 47 codes.
- * Languages are mapped to Gemini-supported codes in the Python agent (config.py).
- * Regional variants and minority languages map to their closest supported language.
+ * Language codes are normalised to Gemini-supported equivalents in the Python
+ * agent via `LANGUAGE_MAP` in `translator/src/config.py`. Regional variants and
+ * minority languages map to their closest supported language. The full list is
+ * shown in the UI; the agent normalises before sending to Gemini.
+ *
+ * When adding a new language here, also add a mapping entry in the Python
+ * config's `LANGUAGE_MAP` if the code is not already in Cloud Translation's
+ * NMT / TLLM supported set.
  */
 export const SUPPORTED_LANGUAGES: Language[] = [
   { code: "ab", name: "Abkhaz", flag: "🇦🇧" },

@@ -8,6 +8,7 @@ import logging
 from livekit import rtc
 
 from config import (
+    LANGUAGE_MAP,
     NATIVE_LANG,
     PARTICIPANT_LANG_ATTR,
     RECONCILE_DEBOUNCE_SEC,
@@ -19,6 +20,11 @@ logger = logging.getLogger("translator.router")
 
 # (speaker_identity, target_lang)
 SessionKey = tuple[str, str]
+
+
+def _normalise_lang(code: str) -> str:
+    """Normalise a BCP-47 code to its Gemini-supported equivalent."""
+    return LANGUAGE_MAP.get(code, code)
 
 
 class TranslationRouter:
@@ -200,27 +206,29 @@ class TranslationRouter:
         return desired
 
     def _listener_target_langs(self) -> set[str]:
-        """Languages any human listener wants (excluding the native sentinel)."""
+        """Languages any human listener wants (excluding the native sentinel),
+        normalised through LANGUAGE_MAP."""
         langs: set[str] = set()
         for p in self._room.remote_participants.values():
-            lang = (p.attributes or {}).get(PARTICIPANT_LANG_ATTR)
-            if lang and lang != NATIVE_LANG:
-                langs.add(lang)
+            raw = (p.attributes or {}).get(PARTICIPANT_LANG_ATTR)
+            if raw and raw != NATIVE_LANG:
+                langs.add(_normalise_lang(raw))
         return langs
 
     def _active_speakers(self) -> list[tuple[str, str]]:
-        """List of (identity, lang) for speakers that have an enabled mic track."""
+        """List of (identity, lang) for speakers that have an enabled mic track.
+        Language codes are normalised through LANGUAGE_MAP."""
         out: list[tuple[str, str]] = []
         for p in self._room.remote_participants.values():
-            lang = (p.attributes or {}).get(PARTICIPANT_LANG_ATTR)
-            if not lang or lang == NATIVE_LANG:
+            raw = (p.attributes or {}).get(PARTICIPANT_LANG_ATTR)
+            if not raw or raw == NATIVE_LANG:
                 # Without a declared language, we can't safely translate.
                 continue
             if p.identity not in self._speaker_tracks:
                 continue
             if not self._has_unmuted_mic(p):
                 continue
-            out.append((p.identity, lang))
+            out.append((p.identity, _normalise_lang(raw)))
         return out
 
     def _has_unmuted_mic(self, p: rtc.RemoteParticipant) -> bool:

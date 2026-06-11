@@ -26,6 +26,7 @@ from config import (
     GEMINI_MAX_FAILURES_BEFORE_LONG_BACKOFF,
     GEMINI_MODEL,
     GEMINI_RECONNECT_BACKOFF_SEC,
+    LANGUAGE_MAP,
 )
 
 logger = logging.getLogger("translator.session")
@@ -60,7 +61,9 @@ class GeminiSession:
         self._room = room
         self._speaker_identity = speaker_identity
         self._speaker_track = speaker_track
-        self._target_lang = target_lang
+        # Normalise through LANGUAGE_MAP: regional variants and minority languages
+        # are mapped to their closest Gemini-supported code.
+        self._target_lang = LANGUAGE_MAP.get(target_lang, target_lang)
         self._gemini_api_key = gemini_api_key
 
         self._audio_source = make_audio_source()

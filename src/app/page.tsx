@@ -16,12 +16,25 @@ export default function Home() {
   return (
     <div className="page">
       <div className="container" style={{ textAlign: "center" }}>
+        {/* Brand */}
+        <div className="enter" style={{ marginBottom: 8 }}>
+          <span className="brand-orbit">Orbit</span>
+        </div>
+
         {/* Title */}
-        <h1 className="display display-xl enter" style={{ marginBottom: 24 }}>
-          <em>Live</em> Translate
+        <h1 className="display display-xl enter" style={{ marginBottom: 8 }}>
+          Conference
         </h1>
 
         {/* Subtitle */}
+        <p
+          className="body-sm enter-d1"
+          style={{ maxWidth: 340, margin: "0 auto 48px", letterSpacing: "0.06em", textTransform: "uppercase" }}
+        >
+          Realtime Translator
+        </p>
+
+        {/* Description */}
         <p
           className="body enter-d1"
           style={{ maxWidth: 340, margin: "0 auto 48px" }}

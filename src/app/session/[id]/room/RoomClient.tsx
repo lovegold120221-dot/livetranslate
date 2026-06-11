@@ -12,6 +12,7 @@ import InCall from "./InCall";
 
 const STORAGE_KEY_NAME = "lt.displayName";
 const STORAGE_KEY_LANG = "lt.lang";
+const STORAGE_KEY_GENDER = "lt.gender";
 
 interface TokenResponse {
   token: string;
@@ -30,6 +31,7 @@ export default function RoomClient({ sessionId }: { sessionId: string }) {
   );
   const [displayName, setDisplayName] = useState<string>("");
   const [initialLang, setInitialLang] = useState<string>("en");
+  const [gender, setGender] = useState<"male" | "female">("male");
 
   // Pull name + lang chosen in the pre-flight screen. If missing, send the
   // user back to the pre-flight so they can pick.
@@ -37,20 +39,30 @@ export default function RoomClient({ sessionId }: { sessionId: string }) {
     if (typeof window === "undefined") return;
     const name = window.sessionStorage.getItem(STORAGE_KEY_NAME);
     const lang = window.sessionStorage.getItem(STORAGE_KEY_LANG);
+    const savedGender = window.sessionStorage.getItem(STORAGE_KEY_GENDER) as "male" | "female" | null;
     if (!name || !lang) {
       router.replace(`/session/${sessionId}`);
       return;
     }
     setDisplayName(name);
     setInitialLang(lang);
+    if (savedGender) setGender(savedGender);
   }, [router, sessionId]);
+
+  // Also read gender from URL params (passed from pre-flight page)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const urlGender = params.get("gender") as "male" | "female" | null;
+    if (urlGender) setGender(urlGender);
+  }, [sessionId]);
 
   // Mint a LiveKit token.
   useEffect(() => {
     if (!displayName) return;
     const url = `/api/token?room=${encodeURIComponent(
       sessionId,
-    )}&identity=${encodeURIComponent(identity)}&name=${encodeURIComponent(displayName)}`;
+    )}&identity=${encodeURIComponent(identity)}&name=${encodeURIComponent(displayName)}&gender=${encodeURIComponent(gender)}`;
     fetch(url)
       .then(async (res) => {
         if (!res.ok) {
@@ -64,7 +76,7 @@ export default function RoomClient({ sessionId }: { sessionId: string }) {
         setServerUrl(data.serverUrl);
       })
       .catch((err) => setError(err.message));
-  }, [sessionId, identity, displayName]);
+  }, [sessionId, identity, displayName, gender]);
 
   function handleLeave() {
     router.push("/");

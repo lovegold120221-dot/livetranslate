@@ -10,7 +10,7 @@ import {
 const SESSION_TTL_SECONDS = 4 * 60 * 60; // 4h hard cap per grill Q21
 const EMPTY_ROOM_TIMEOUT = 60; // close empty rooms after 60s
 const DEPARTURE_TIMEOUT = 30; // close after last person leaves
-const MAX_PARTICIPANTS = 8; // room cap per grill Q21
+const MAX_PARTICIPANTS = 40; // room cap per grill Q21
 // Must match agent_name in translator/src/agent.py. Using "gemini-translator"
 // instead of the generic "translator" to avoid colliding with stale Cloud
 // Agents that may already be registered under "translator".
@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
   const identity = req.nextUrl.searchParams.get("identity");
   const displayName =
     req.nextUrl.searchParams.get("name")?.trim() || identity || "";
+  const gender = req.nextUrl.searchParams.get("gender") || "male";
 
   if (!room || !identity) {
     return NextResponse.json(
@@ -44,6 +45,7 @@ export async function GET(req: NextRequest) {
     identity,
     name: displayName,
     ttl: SESSION_TTL_SECONDS,
+    metadata: JSON.stringify({ gender }),
   });
 
   // Peer model (grill Q7): every participant can publish audio + video and

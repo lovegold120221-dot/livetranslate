@@ -754,8 +754,14 @@ body {
 }
 
 /* ——————————————————————————————————————
-   Language pill
-   —————————————————————————————————————— */
+    Language pill
+    —————————————————————————————————————— */
+
+.lang-pill-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .lang-pill {
   position: relative;
@@ -802,6 +808,33 @@ body {
   inset: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+.lang-speaker-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.lang-speaker-btn:hover {
+  border-color: var(--fg-tertiary);
+  color: var(--fg);
+}
+
+.lang-speaker-on {
+  color: var(--fg);
+}
+
+.lang-speaker-off {
+  color: var(--fg-tertiary);
 }
 
 /* ——————————————————————————————————————
@@ -981,23 +1014,436 @@ body {
 }
 
 /* ——————————————————————————————————————
-   Responsive
+    Responsive
+    —————————————————————————————————————— */
+
+/* Brand styling */
+.brand-orbit {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 8vw, 56px);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  display: block;
+  line-height: 1;
+}
+
+.brand-conference {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 36px);
+  font-weight: 400;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+  display: block;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+/* ——————————————————————————————————————
+   Native mobile touch handling
    —————————————————————————————————————— */
 
-@media (max-width: 520px) {
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, select, input, a {
+  touch-action: manipulation;
+}
+
+/* Safe area insets for notched devices */
+.page {
+  padding-top: max(32px, env(safe-area-inset-top));
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+  padding-left: max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
+}
+
+.room-shell {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ——————————————————————————————————————
+   Tablet (768px - 1024px)
+   —————————————————————————————————————— */
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .room-chrome {
+    padding: 16px 20px;
+  }
+
+  .room-stage {
+    padding: 20px;
+  }
+
+  .self-view {
+    width: 180px;
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .tile-placeholder-initial {
+    font-size: clamp(48px, 7vw, 80px);
+  }
+
+  .control-bar {
+    padding: 12px 16px;
+    gap: 4px;
+  }
+
+  .ctrl {
+    padding: 8px 12px;
+    min-width: 64px;
+    font-size: 10px;
+  }
+}
+
+/* ——————————————————————————————————————
+   Mobile (up to 768px)
+   —————————————————————————————————————— */
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
   .page {
-    padding: 24px 20px;
+    padding: 20px 16px;
+    min-height: 100dvh;
   }
 
   .page-top {
-    padding-top: 48px;
+    padding-top: 40px;
+  }
+
+  .container {
+    max-width: 100%;
+  }
+
+  .display-xl {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+
+  .display-lg {
+    font-size: clamp(28px, 8vw, 40px);
+  }
+
+  .display-md {
+    font-size: clamp(22px, 6vw, 28px);
   }
 
   .card {
-    padding: 20px;
+    padding: 16px;
+  }
+
+  .btn {
+    padding: 14px 24px;
+    font-size: 15px;
+    min-height: 48px;
   }
 
   .btn-dark {
     width: 100%;
+  }
+
+  .btn-outline {
+    width: 100%;
+  }
+
+  .select-field {
+    padding: 14px 40px 14px 16px;
+    font-size: 15px;
+    min-height: 48px;
+  }
+
+  /* Room layout */
+  .room-shell {
+    height: 100dvh;
+  }
+
+  .room-chrome {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chrome-meta {
+    font-size: 11px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .room-stage {
+    padding: 12px;
+  }
+
+  /* Self view - smaller on mobile */
+  .self-view {
+    width: 120px;
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .self-view:hover {
+    transform: none;
+  }
+
+  /* Tile grid - single column on mobile */
+  .tile-grid {
+    gap: 8px;
+  }
+
+  .tile {
+    aspect-ratio: 4 / 3;
+  }
+
+  .tile-placeholder-initial {
+    font-size: clamp(48px, 12vw, 80px);
+  }
+
+  .tile-name {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .tile-badge {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .tile-mic-off {
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Control bar - scrollable on mobile */
+  .control-bar {
+    padding: 10px 12px;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: flex-start;
+  }
+
+  .control-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ctrl {
+    padding: 8px 10px;
+    min-width: 56px;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .ctrl-icon {
+    height: 16px;
+  }
+
+  .ctrl-leave {
+    margin-left: 8px;
+  }
+
+  /* Language pill */
+  .lang-pill {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .lang-pill-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .lang-speaker-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .lang-speaker-btn:hover {
+    border-color: var(--fg-tertiary);
+    color: var(--fg);
+  }
+
+  .lang-speaker-on {
+    color: var(--fg);
+  }
+
+  .lang-speaker-off {
+    color: var(--fg-tertiary);
+  }
+
+  /* Captions sidebar - full overlay on mobile */
+  .room-shell--captions-open .captions {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .captions-inner {
+    width: 100%;
+  }
+
+  /* Empty stage */
+  .empty-stage {
+    padding: 0 16px;
+  }
+
+  .empty-stage-eyebrow {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
+  .invite-card {
+    flex-direction: column;
+  }
+
+  .invite-card-url {
+    white-space: normal;
+    word-break: break-all;
+    padding: 12px;
+  }
+
+  .invite-card-btn {
+    padding: 12px;
+    text-align: center;
+  }
+}
+
+/* ——————————————————————————————————————
+   Small mobile (up to 480px)
+   —————————————————————————————————————— */
+
+@media (max-width: 480px) {
+  .page {
+    padding: 16px 12px;
+  }
+
+  .display-xl {
+    font-size: 36px;
+  }
+
+  .display-lg {
+    font-size: 28px;
+  }
+
+  .brand-orbit {
+    font-size: 32px;
+  }
+
+  .brand-conference {
+    font-size: 22px;
+  }
+
+  .room-chrome {
+    padding: 10px 12px;
+  }
+
+  .room-stage {
+    padding: 8px;
+  }
+
+  .self-view {
+    width: 100px;
+    bottom: 8px;
+    right: 8px;
+  }
+
+  .ctrl {
+    padding: 6px 8px;
+    min-width: 48px;
+    font-size: 9px;
+  }
+
+  .ctrl-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .tile-grid {
+    gap: 6px;
+  }
+}
+
+/* ——————————————————————————————————————
+   Landscape mobile
+   —————————————————————————————————————— */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .room-shell {
+    height: 100dvh;
+  }
+
+  .room-chrome {
+    padding: 8px 16px;
+  }
+
+  .room-stage {
+    padding: 8px 16px;
+  }
+
+  .self-view {
+    width: 140px;
+    bottom: 8px;
+    right: 8px;
+  }
+
+  .control-bar {
+    padding: 8px 16px;
+  }
+
+  .ctrl {
+    padding: 6px 10px;
+    min-width: 52px;
+  }
+}
+
+/* ——————————————————————————————————————
+   Dark mode support (optional)
+   —————————————————————————————————————— */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1A1917;
+    --bg-elevated: #242320;
+    --bg-inset: #2A2926;
+
+    --fg: #F6F4F0;
+    --fg-secondary: #9C9890;
+    --fg-tertiary: #6B6860;
+    --fg-ghost: #3D3B38;
+
+    --border: #3D3B38;
+    --border-light: #2A2926;
+  }
+}
+
+/* ——————————————————————————————————————
+   Reduced motion
+   —————————————————————————————————————— */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

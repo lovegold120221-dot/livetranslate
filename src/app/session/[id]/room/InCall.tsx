@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   useLocalParticipant,
   useRemoteParticipants,
   useRoomContext,
 } from "@livekit/components-react";
-import { ConnectionState, ParticipantKind, RoomEvent } from "livekit-client";
+import { ConnectionState, ParticipantKind, RoomEvent, LocalTrackPublication, createLocalScreenTracks, Track } from "livekit-client";
 import { PARTICIPANT_LANG_ATTR } from "@/lib/config";
 import { getLanguageByCode } from "@/lib/languages";
 import { useTranslationRouting } from "./useTranslationRouting";
@@ -32,6 +32,8 @@ export default function InCall({
   const remotes = useRemoteParticipants();
   const [lang, setLang] = useState(initialLang);
   const [captionsOpen, setCaptionsOpen] = useState(false);
+  const [translatorAudioOn, setTranslatorAudioOn] = useState(true);
+  const screenTrackRef = useRef<LocalTrackPublication | null>(null);
 
   // Push the local lang into participant attributes so the agent + peers see
   // it. setAttributes is silently dropped before the room is connected, so we
@@ -72,13 +74,65 @@ export default function InCall({
 
   const [screenShareOn, setScreenShareOn] = useState(false);
 
-  // Note: Capture/publish/render for screen-share is not fully wired yet.
-  // This button currently only toggles UI state. Proper publishing requires
-  // using the LiveKit local track APIs for screen capture.
   const toggleScreenShare = useCallback(async () => {
     if (!room || !localParticipant) return;
-    setScreenShareOn((v) => !v);
-  }, [room, localParticipant]);
+
+    if (screenShareOn) {
+      // Stop screen sharing
+      if (screenTrackRef.current) {
+        await localParticipant.unpublishTrack(screenTrackRef.current.trackSid);
+        screenTrackRef.current = null;
+      }
+      setScreenShareOn(false);
+    } else {
+      // Start screen sharing
+      try {
+        const tracks = await createLocalScreenTracks({
+          audio: true,
+          video: true,
+        });
+
+        for (const track of tracks) {
+          const publication = await localParticipant.publishTrack(track, {
+            source: track.kind === "video" ? Track.Source.ScreenShare : Track.Source.ScreenShareAudio,
+          });
+          if (track.kind === "video") {
+            screenTrackRef.current = publication as LocalTrackPublication;
+          }
+        }
+
+        // Handle the stream ending (user clicks "Stop sharing" in browser UI)
+        const videoTrack = tracks.find(t => t.kind === "video");
+        if (videoTrack?.mediaStreamTrack) {
+          videoTrack.mediaStreamTrack.onended = () => {
+            setScreenShareOn(false);
+            if (screenTrackRef.current) {
+              localParticipant.unpublishTrack(screenTrackRef.current.trackSid);
+              screenTrackRef.current = null;
+            }
+          };
+        }
+
+        setScreenShareOn(true);
+      } catch (err) {
+        console.error("Failed to start screen share:", err);
+        // User denied permission or other error
+      }
+    }
+  }, [room, localParticipant, screenShareOn]);
+
+  // Clean up screen share on unmount
+  useEffect(() => {
+    return () => {
+      if (screenTrackRef.current && localParticipant) {
+        localParticipant.unpublishTrack(screenTrackRef.current.trackSid);
+      }
+    };
+  }, [localParticipant]);
+
+  const toggleTranslatorAudio = useCallback(() => {
+    setTranslatorAudioOn((prev) => !prev);
+  }, []);
 
 
 
@@ -104,7 +158,12 @@ export default function InCall({
               </strong>
             </span>
           </div>
-          <LanguagePill value={lang} onChange={setLang} />
+          <LanguagePill
+            value={lang}
+            onChange={setLang}
+            translatorAudioOn={translatorAudioOn}
+            onToggleTranslatorAudio={toggleTranslatorAudio}
+          />
         </header>
 
         {/* Stage */}

@@ -56,6 +56,15 @@ export default function PreFlightPage({
   return (
     <div className="page">
       <div className="container">
+        {/* Brand */}
+        <div className="enter" style={{ textAlign: "center", marginBottom: 24 }}>
+          <span className="brand-orbit">Orbit</span>
+          <span className="brand-conference">Conference</span>
+          <p className="body-sm" style={{ marginTop: 4, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            Realtime Translator
+          </p>
+        </div>
+
         <h1 className="display display-lg enter" style={{ marginBottom: 8 }}>
           Join the call
         </h1>
@@ -99,15 +108,15 @@ export default function PreFlightPage({
           </label>
 
           <label className="label" style={{ display: "block" }}>
-            Voice gender
+            Voice
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value as Gender)}
               className="select-field"
               style={{ marginTop: 8 }}
             >
-              <option value="male">Male (Orus)</option>
-              <option value="female">Female (Aoede)</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </select>
           </label>
         </div>

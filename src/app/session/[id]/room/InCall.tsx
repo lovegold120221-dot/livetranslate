@@ -17,7 +17,6 @@ import LanguagePill from "./LanguagePill";
 import CaptionsSidebar from "./CaptionsSidebar";
 
 import { useCallback } from "react";
-import type { LocalTrack } from "livekit-client";
 
 
 
@@ -72,7 +71,6 @@ export default function InCall({
       : "";
 
   const [screenShareOn, setScreenShareOn] = useState(false);
-  const [screenTrack, setScreenTrack] = useState<LocalTrack | null>(null);
 
   // Note: Capture/publish/render for screen-share is not fully wired yet.
   // This button currently only toggles UI state. Proper publishing requires

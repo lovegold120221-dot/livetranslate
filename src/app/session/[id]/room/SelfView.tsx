@@ -12,20 +12,23 @@ export default function SelfView() {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
     const track = cameraTrack?.track;
     const on =
       !!track &&
       cameraTrack?.source === Track.Source.Camera &&
       !cameraTrack.isMuted;
+
+    setCameraOn(on);
+
     if (on && track) {
       track.attach(video);
-      setCameraOn(true);
       return () => {
         track.detach(video);
       };
     }
+
     video.srcObject = null;
-    setCameraOn(false);
   }, [cameraTrack, localParticipant]);
 
   const displayName = localParticipant?.name || "you";

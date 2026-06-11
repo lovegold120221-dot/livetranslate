@@ -5,6 +5,11 @@ import {
   RoomAgentDispatch,
 } from "livekit-server-sdk";
 
+// Hard cap on participants per room.
+// Kept in sync with src/lib/config.ts.
+const MAX_PARTICIPANTS = 40;
+
+
 // Session caps (mirrors src/lib/config.ts on the client). Hardcoded here to
 // avoid a runtime import cycle; keep these in sync if you change them in one place.
 const SESSION_TTL_SECONDS = 4 * 60 * 60; // 4h hard cap per grill Q21

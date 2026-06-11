@@ -6,6 +6,9 @@ import { PICKER_LANGUAGES } from "@/lib/languages";
 
 const STORAGE_KEY_NAME = "lt.displayName";
 const STORAGE_KEY_LANG = "lt.lang";
+const STORAGE_KEY_GENDER = "lt.gender";
+
+type Gender = "male" | "female";
 
 export default function PreFlightPage({
   params,
@@ -17,6 +20,7 @@ export default function PreFlightPage({
 
   const [displayName, setDisplayName] = useState("");
   const [lang, setLang] = useState<string>("en");
+  const [gender, setGender] = useState<Gender>("male");
   const [shareCopied, setShareCopied] = useState(false);
 
   // Restore last-used name + language so returning users skip retyping.
@@ -24,15 +28,18 @@ export default function PreFlightPage({
     if (typeof window === "undefined") return;
     const savedName = window.sessionStorage.getItem(STORAGE_KEY_NAME);
     const savedLang = window.sessionStorage.getItem(STORAGE_KEY_LANG);
+    const savedGender = window.sessionStorage.getItem(STORAGE_KEY_GENDER) as Gender | null;
     if (savedName) setDisplayName(savedName);
     if (savedLang) setLang(savedLang);
+    if (savedGender) setGender(savedGender);
   }, []);
 
   function handleJoin() {
     if (!displayName.trim()) return;
     window.sessionStorage.setItem(STORAGE_KEY_NAME, displayName.trim());
     window.sessionStorage.setItem(STORAGE_KEY_LANG, lang);
-    router.push(`/session/${id}/room`);
+    window.sessionStorage.setItem(STORAGE_KEY_GENDER, gender);
+    router.push(`/session/${id}/room?gender=${gender}`);
   }
 
   async function copyInviteLink() {
@@ -88,6 +95,19 @@ export default function PreFlightPage({
                   {l.flag} {l.name}
                 </option>
               ))}
+            </select>
+          </label>
+
+          <label className="label" style={{ display: "block" }}>
+            Voice gender
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value as Gender)}
+              className="select-field"
+              style={{ marginTop: 8 }}
+            >
+              <option value="male">Male (Orus)</option>
+              <option value="female">Female (Aoede)</option>
             </select>
           </label>
         </div>

@@ -16,6 +16,11 @@ import ControlBar from "./ControlBar";
 import LanguagePill from "./LanguagePill";
 import CaptionsSidebar from "./CaptionsSidebar";
 
+import { useCallback } from "react";
+import type { LocalTrack } from "livekit-client";
+
+
+
 export default function InCall({
   initialLang,
   onLeave,
@@ -66,11 +71,26 @@ export default function InCall({
       ? `${window.location.origin}/session/${room.name}`
       : "";
 
+  const [screenShareOn, setScreenShareOn] = useState(false);
+  const [screenTrack, setScreenTrack] = useState<LocalTrack | null>(null);
+
+  // Note: Capture/publish/render for screen-share is not fully wired yet.
+  // This button currently only toggles UI state. Proper publishing requires
+  // using the LiveKit local track APIs for screen capture.
+  const toggleScreenShare = useCallback(async () => {
+    if (!room || !localParticipant) return;
+    setScreenShareOn((v) => !v);
+  }, [room, localParticipant]);
+
+
+
   return (
+
     <div
       className={`room-shell${captionsOpen ? " room-shell--captions-open" : ""}`}
     >
       <div className="room">
+
         {/* Top chrome */}
         <header className="room-chrome">
           <div className="chrome-meta">
@@ -105,7 +125,12 @@ export default function InCall({
           inviteUrl={inviteUrl}
           captionsOpen={captionsOpen}
           onToggleCaptions={() => setCaptionsOpen((v) => !v)}
+          onToggleScreenShare={toggleScreenShare}
+          screenShareOn={screenShareOn}
         />
+
+
+
       </div>
 
       {/* Captions — sibling column of .room so the room is pushed, not covered */}

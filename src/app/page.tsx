@@ -88,7 +88,7 @@ export default function Home() {
 
         {/* Footer */}
         <p className="mono enter-d4" style={{ marginTop: 48 }}>
-          Powered by Gemini Live API + LiveKit
+          Powered by Eburon AI + Orbit
         </p>
       </div>
     </div>

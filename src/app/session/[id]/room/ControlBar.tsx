@@ -14,22 +14,29 @@ import {
   LinkIcon,
   MicOffIcon,
   MicOnIcon,
+  ScreenShareIcon,
 } from "./icons";
+
 
 export default function ControlBar({
   onLeave,
   inviteUrl,
   captionsOpen,
   onToggleCaptions,
+  onToggleScreenShare,
+  screenShareOn,
 }: {
   onLeave: () => void;
   inviteUrl: string;
   captionsOpen: boolean;
   onToggleCaptions: () => void;
+  onToggleScreenShare: () => void;
+  screenShareOn: boolean;
 }) {
   const { localParticipant, microphoneTrack, cameraTrack } = useLocalParticipant();
   const room = useRoomContext();
   const [copied, setCopied] = useState(false);
+
 
   const micOn = !!microphoneTrack && !microphoneTrack.isMuted;
   const camOn =
@@ -78,11 +85,18 @@ export default function ControlBar({
         icon={<CaptionsIcon />}
       />
       <CtrlButton
+        active={screenShareOn}
+        onClick={onToggleScreenShare}
+        label={screenShareOn ? "Stop share" : "Share screen"}
+        icon={<ScreenShareIcon />}
+      />
+      <CtrlButton
         active={false}
         onClick={copyInvite}
         label={copied ? "Copied" : "Invite"}
         icon={<LinkIcon />}
       />
+
       <button
         className="ctrl ctrl--warning ctrl-leave"
         onClick={leave}

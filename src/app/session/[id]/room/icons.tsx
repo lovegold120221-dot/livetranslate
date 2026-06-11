@@ -90,3 +90,13 @@ export function ChevronDownIcon() {
     </svg>
   );
 }
+
+export function ScreenShareIcon() {
+  return (
+    <svg {...baseProps}>
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <path d="M8 20l4-4 4 4" />
+    </svg>
+  );
+}
+
